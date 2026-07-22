@@ -1,6 +1,6 @@
 // ==========================================================================
-   MDT / Student Attendance System - Data Layer with Cloud Sync
-   ==========================================================================
+// Student Attendance System - Data Layer with Cloud Sync
+// ==========================================================================
 
 const STORAGE_KEYS = {
     STUDENTS: 'attendance_students',
