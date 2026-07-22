@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Student Attendance System</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Authentication Guard -->
+    <script src="js/auth.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar no-print">
+            <div class="sidebar-brand">
+                <img src="photo/logo_setec.png" alt="SETEC Logo" style="height: 38px; width: auto; object-fit: contain;">
+                <span class="brand-text">Attendance Pro</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="index.html" class="sidebar-link active">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </a>
+                <a href="attendance.html" class="sidebar-link">
+                    <i class="bi bi-calendar-check"></i> Attendance
+                </a>
+                <a href="manage.html" class="sidebar-link">
+                    <i class="bi bi-people"></i> Manage Data
+                </a>
+            </nav>
+
+            <div class="sidebar-user">
+                <div class="user-details">
+                    <div class="user-avatar">AD</div>
+                    <div>
+                        <div class="user-name">Administrator</div>
+                        <div class="user-role">System Admin</div>
+                    </div>
+                </div>
+                <button class="btn-logout-icon" onclick="logout()" title="Logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            
+            <!-- Top Navbar -->
+            <header class="top-navbar no-print">
+                <h2 class="top-navbar-title">System Dashboard</h2>
+                <div class="top-navbar-actions">
+                    <span class="badge bg-light text-dark border py-2 px-3 fs-6 rounded-pill">
+                        <i class="bi bi-calendar3 me-2 text-primary"></i>Today: <span id="current-date-badge">2026-07-23</span>
+                    </span>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="content-body">
+                
+                <!-- Metric Summary Cards -->
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-3 mb-4">
+                    <!-- Total Students -->
+                    <div class="col">
+                        <div class="stat-card primary h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted fw-bold small uppercase">Students</span>
+                                <div class="stat-icon bg-primary-subtle text-primary">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value text-primary" id="stat-total-students">0</div>
+                            <small class="text-muted">Enrolled</small>
+                        </div>
+                    </div>
+
+                    <!-- Total Classes -->
+                    <div class="col">
+                        <div class="stat-card purple h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted fw-bold small uppercase">Classes</span>
+                                <div class="stat-icon bg-purple-subtle" style="color: var(--accent-purple);">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" style="color: var(--accent-purple);" id="stat-total-classes">0</div>
+                            <small class="text-muted">Active classes</small>
+                        </div>
+                    </div>
+
+                    <!-- Present Today -->
+                    <div class="col">
+                        <div class="stat-card success h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted fw-bold small uppercase">Present</span>
+                                <div class="stat-icon bg-success-subtle text-success">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value text-success" id="stat-present-today">0</div>
+                            <small class="text-muted">Marked present</small>
+                        </div>
+                    </div>
+
+                    <!-- Absent Today -->
+                    <div class="col">
+                        <div class="stat-card danger h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted fw-bold small uppercase">Absent</span>
+                                <div class="stat-icon bg-danger-subtle text-danger">
+                                    <i class="bi bi-x-circle"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value text-danger" id="stat-absent-today">0</div>
+                            <small class="text-muted">Marked absent</small>
+                        </div>
+                    </div>
+
+                    <!-- Late Today -->
+                    <div class="col">
+                        <div class="stat-card warning h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted fw-bold small uppercase">Late</span>
+                                <div class="stat-icon bg-warning-subtle text-warning">
+                                    <i class="bi bi-clock"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value text-warning" id="stat-late-today">0</div>
+                            <small class="text-muted">Arrived late</small>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Rate -->
+                    <div class="col">
+                        <div class="stat-card primary h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted fw-bold small uppercase">Rate</span>
+                                <div class="stat-icon bg-info-subtle text-info">
+                                    <i class="bi bi-pie-chart"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value text-info" id="stat-attendance-rate">0%</div>
+                            <small class="text-muted">Presence rate</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Action Buttons & Recent Log -->
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Today's Attendance Logs</h5>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-light text-dark border" id="today-record-count">0 Record(s)</span>
+                                    <a href="attendance.html" class="btn btn-primary btn-sm text-white">
+                                        <i class="bi bi-pencil-square me-1"></i> Mark Attendance
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>Class</th>
+                                            <th>Gender</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="today-attendance-table-body">
+                                        <!-- Rendered dynamically by js/dashboard.js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+    </div>
+
+    <!-- Core Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>
