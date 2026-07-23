@@ -1,1 +1,1 @@
-# ស្នាដៃធ្វើដោយ Long kousy
+# Created by Long kousy
