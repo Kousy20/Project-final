@@ -25,6 +25,41 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.08);
 }
 
+/* Helper & Brand Classes */
+.brand-logo {
+    height: 38px;
+    width: auto;
+    object-fit: contain;
+}
+
+.login-brand-logo {
+    max-height: 70px;
+    width: auto;
+    object-fit: contain;
+}
+
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 380px;
+    width: calc(100% - 40px);
+}
+
+.search-input-group {
+    max-width: 100%;
+    width: 350px;
+}
+
+.text-purple {
+    color: var(--accent-purple) !important;
+}
+
+.th-status {
+    min-width: 250px;
+}
+
 * {
     box-sizing: border-box;
 }

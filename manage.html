@@ -21,7 +21,7 @@
         <aside class="app-sidebar no-print">
             <div class="sidebar-brand">
                 <div class="d-flex align-items-center gap-2">
-                    <img src="photo/logo_setec.png" alt="SETEC Logo" style="height: 38px; width: auto; object-fit: contain;">
+                    <img src="photo/logo_setec.png" alt="SETEC Logo" class="brand-logo">
                     <span class="brand-text">Attendance System</span>
                 </div>
                 <button class="sidebar-close-btn d-lg-none" id="mobile-sidebar-close" aria-label="Close sidebar">
@@ -66,7 +66,7 @@
                     </button>
                     <h2 class="top-navbar-title mb-0">Data Management</h2>
                 </div>
-                <div id="alert-container" style="position: fixed; top: 20px; right: 20px; z-index: 1050; max-width: 380px;"></div>
+                <div id="alert-container" class="alert-container"></div>
             </header>
 
             <!-- Main Content -->
@@ -96,7 +96,7 @@
                             <div class="tab-pane fade show active" id="students" role="tabpanel" aria-labelledby="students-tab">
                                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3 mb-4">
                                     <!-- Search Bar -->
-                                    <div class="input-group" style="max-width: 100%; width: 350px;">
+                                    <div class="input-group search-input-group">
                                         <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
                                         <input type="text" id="search-student" class="form-control border-start-0" placeholder="Search by name, ID or phone...">
                                     </div>
