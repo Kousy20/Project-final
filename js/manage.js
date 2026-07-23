@@ -1,17 +1,67 @@
-let studentModal;
-let classModal;
+// Simple Helper Functions for Modals & Tabs (No Bootstrap required)
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('show');
+        modal.style.display = 'block';
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+    }
+}
+
+function switchTab(tabTargetId) {
+    document.querySelectorAll('.nav-tabs .nav-link').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('show', 'active'));
+
+    const targetBtn = document.querySelector(`[data-bs-target="${tabTargetId}"]`) || document.querySelector(`[data-target="${tabTargetId}"]`);
+    const targetPane = document.querySelector(tabTargetId);
+
+    if (targetBtn) targetBtn.classList.add('active');
+    if (targetPane) targetPane.classList.add('show', 'active');
+}
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap Modals
-    studentModal = new bootstrap.Modal(document.getElementById('studentModal'));
-    classModal = new bootstrap.Modal(document.getElementById('classModal'));
+    // Tab switch click handlers
+    document.querySelectorAll('.nav-tabs .nav-link').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('data-bs-target') || this.getAttribute('data-target');
+            if (target) switchTab(target);
+        });
+    });
+
+    // Modal dismiss buttons (data-bs-dismiss="modal")
+    document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = this.closest('.modal');
+            if (modal) {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    // Close modal on backdrop click
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+                this.style.display = 'none';
+            }
+        });
+    });
 
     // Check query params to activate specific tab
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
     if (tabParam === 'classes') {
-        const classesTab = new bootstrap.Tab(document.getElementById('classes-tab'));
-        classesTab.show();
+        switchTab('#classes');
     }
 
     // Initial render
@@ -32,21 +82,24 @@ document.addEventListener('DOMContentLoaded', function() {
 function showAlert(message, type = 'success') {
     const container = document.getElementById('alert-container');
     const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show shadow-sm border-0`;
+    alertDiv.className = `alert alert-${type} shadow-sm border-0`;
     alertDiv.setAttribute('role', 'alert');
     alertDiv.innerHTML = `
         <div class="d-flex align-items-center">
             <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill'} me-2"></i>
             <div>${escapeHtml(message)}</div>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" onclick="this.parentElement.remove()" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+        </button>
     `;
     container.appendChild(alertDiv);
 
     // Auto dismiss after 3.5 seconds
     setTimeout(() => {
-        const bsAlert = bootstrap.Alert.getOrCreateInstance(alertDiv);
-        bsAlert.close();
+        if (alertDiv && alertDiv.parentElement) {
+            alertDiv.remove();
+        }
     }, 3500);
 }
 
@@ -60,18 +113,31 @@ function renderStudents(filterText = '') {
     const tbody = document.getElementById('student-table-body');
     tbody.innerHTML = '';
 
-    const query = filterText.toLowerCase();
-    const filtered = students.filter(student => 
-        student.id.toLowerCase().includes(query) || 
-        student.name.toLowerCase().includes(query) ||
-        student.phone.includes(query)
-    );
+    if (students.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-4 text-muted">
+                    <i class="bi bi-info-circle me-1"></i> No student records found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    const filtered = students.filter(s => {
+        const text = filterText.toLowerCase();
+        const className = (classes.find(c => c.id === s.classId)?.name || '').toLowerCase();
+        return s.id.toLowerCase().includes(text) ||
+            s.name.toLowerCase().includes(text) ||
+            s.phone.toLowerCase().includes(text) ||
+            className.includes(text);
+    });
 
     if (filtered.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="text-center py-4 text-muted">
-                    <i class="bi bi-info-circle me-1"></i> No students found.
+                    No students match search filter "${escapeHtml(filterText)}"
                 </td>
             </tr>
         `;
@@ -79,10 +145,10 @@ function renderStudents(filterText = '') {
     }
 
     filtered.forEach(student => {
-        const classObj = classes.find(c => c.id === student.classId);
-        const className = classObj ? classObj.name : 'Unassigned';
+        const cls = classes.find(c => c.id === student.classId);
+        const className = cls ? cls.name : 'Unassigned';
+
         const tr = document.createElement('tr');
-        
         tr.innerHTML = `
             <td><code>${student.id}</code></td>
             <td><strong>${escapeHtml(student.name)}</strong></td>
@@ -104,16 +170,15 @@ function renderStudents(filterText = '') {
 
 function populateClassSelects() {
     const classes = getClasses();
-    const select = document.getElementById('student-class');
-    
-    // Keep the default first option
-    select.innerHTML = '<option value="" disabled selected>Select class</option>';
-    
+    const studentClassSelect = document.getElementById('student-class');
+
+    studentClassSelect.innerHTML = '<option value="" disabled selected>Select class</option>';
+
     classes.forEach(c => {
-        const option = document.createElement('option');
-        option.value = c.id;
-        option.textContent = c.name;
-        select.appendChild(option);
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.name} (${c.id})`;
+        studentClassSelect.appendChild(opt);
     });
 }
 
@@ -127,7 +192,7 @@ function showAddStudentModal() {
     document.getElementById('student-id').classList.remove('is-invalid');
     
     populateClassSelects();
-    studentModal.show();
+    openModal('studentModal');
 }
 
 function showEditStudentModal(studentId) {
@@ -150,7 +215,7 @@ function showEditStudentModal(studentId) {
     document.getElementById('student-class').value = student.classId;
 
     document.getElementById('student-id').classList.remove('is-invalid');
-    studentModal.show();
+    openModal('studentModal');
 }
 
 function handleStudentSubmit(e) {
@@ -188,7 +253,7 @@ function handleStudentSubmit(e) {
         }
     }
 
-    studentModal.hide();
+    closeModal('studentModal');
     renderStudents();
 }
 
@@ -254,7 +319,7 @@ function renderClasses() {
 function showAddClassModal() {
     document.getElementById('class-form').reset();
     document.getElementById('class-id').classList.remove('is-invalid');
-    classModal.show();
+    openModal('classModal');
 }
 
 function handleClassSubmit(e) {
@@ -278,7 +343,7 @@ function handleClassSubmit(e) {
     saveClasses(classes);
     showAlert(`Class ${name} added successfully!`, 'success');
 
-    classModal.hide();
+    closeModal('classModal');
     renderClasses();
     populateClassSelects(); // Sync student dropdowns
 }

@@ -29,20 +29,23 @@ function showAlert(message, type = 'success') {
     if (!container) return;
     
     const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show shadow-sm border-0`;
+    alertDiv.className = `alert alert-${type} shadow-sm border-0`;
     alertDiv.setAttribute('role', 'alert');
     alertDiv.innerHTML = `
         <div class="d-flex align-items-center">
             <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill'} me-2"></i>
             <div>${escapeHtml(message)}</div>
         </div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" onclick="this.parentElement.remove()" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+        </button>
     `;
     container.appendChild(alertDiv);
 
     setTimeout(() => {
-        const bsAlert = bootstrap.Alert.getOrCreateInstance(alertDiv);
-        bsAlert.close();
+        if (alertDiv && alertDiv.parentElement) {
+            alertDiv.remove();
+        }
     }, 3500);
 }
 
