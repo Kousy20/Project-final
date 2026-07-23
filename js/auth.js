@@ -29,3 +29,50 @@ function logout() {
 
 // Automatically check authentication when this script is loaded
 checkAuth();
+
+// Mobile Sidebar Handler
+function initMobileSidebar() {
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById('mobile-sidebar-toggle');
+        const closeBtn = document.getElementById('mobile-sidebar-close');
+        const overlay = document.getElementById('sidebar-overlay');
+        const sidebar = document.querySelector('.app-sidebar');
+
+        function openSidebar() {
+            if (sidebar) sidebar.classList.add('show');
+            if (overlay) overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            if (sidebar) sidebar.classList.remove('show');
+            if (overlay) overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', openSidebar);
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeSidebar);
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', closeSidebar);
+        }
+
+        // Close sidebar when clicking menu links on mobile
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    closeSidebar();
+                }
+            });
+        });
+    });
+}
+
+initMobileSidebar();
+
