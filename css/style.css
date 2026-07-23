@@ -53,7 +53,7 @@
 }
 
 .text-purple {
-    color: var(--accent-purple) !important;
+    color: var(--accent-purple);
 }
 
 .th-status {
@@ -1204,7 +1204,7 @@ body {
     .app-sidebar,
     .top-navbar,
     .no-print {
-        display: none !important;
+        display: none;
     }
 
     .main-wrapper {
@@ -1213,13 +1213,13 @@ body {
     }
 
     .print-header {
-        display: block !important;
+        display: block;
     }
 }
 
-/* ==========================================================================
+/* =================================
    Mobile & Responsive Enhancements
-   ========================================================================== */
+   ================================= */
 
 /* Overlay backdrop for mobile drawer */
 .sidebar-overlay {
